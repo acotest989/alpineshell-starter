@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlpineShell</title>
+  <meta name="description" content="Starter for AlpineShell — structure and conventions for Alpine.js apps, without a build step.">
+  <link rel="preload" href="/theme.css" as="fetch" crossorigin>
+  <style>[x-cloak] { display: none !important; }</style>
+  <script type="module" src="/main.js" defer></script>
+</head>
+<body class="bg-gray-50">
+  <div id="app" x-data="app" x-cloak>
+
+    <div x-html="partials.toast"></div>
+
+    <div id="page" class="flex flex-col min-h-screen"></div>
+
+  </div>
+</body>
+</html>

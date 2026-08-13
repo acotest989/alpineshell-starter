@@ -1,0 +1,9 @@
+<main class="mx-auto w-full max-w-3xl p-4" x-data="homePage">
+  <h1 class="text-xl font-semibold text-gray-900">Home</h1>
+  <p class="muted mt-2" x-text="message"></p>
+
+  <div class="card mt-6 p-4">
+    <p class="eyebrow">Signed in as</p>
+    <p class="mt-1 text-sm text-gray-900" x-text="$store.session.user?.name ?? 'nobody'"></p>
+  </div>
+</main>
