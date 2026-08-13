@@ -58,6 +58,7 @@ alpineshell/      the framework
 pages/            one .html + one .js per route
 partials/         markup reused across routes
 stores/           Alpine stores — state that outlives a page
+models/           maps API payloads into the app's own shapes
 services/         talks to the outside world; the only place that knows endpoints
 lib/              helpers, portable to any project
 ```

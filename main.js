@@ -17,6 +17,7 @@ createApp({
     notfound: '404',
     '/': 'home',
     '/login': { page: 'login', header: false, footer: false },
+    '/account': 'account',
   },
 
   protected: ['/account'], // prefix match: '/account' also covers '/account/orders'
