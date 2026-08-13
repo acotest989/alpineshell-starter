@@ -11,7 +11,9 @@ This repository is both the framework (`alpineshell/`) and a starter you can bui
 
 That is it. `liveServer.settings.file` is the SPA fallback: every 404 returns `index.html`, so a refresh on `/some/deep/route` still boots the app.
 
-Sign in on `/login` with `demo@shop.test` / `test1234` — that user lives in `services/auth.js`.
+Sign in on `/login` with `demo@shop.test` / `test1234` — users live in `mock/users.json`, and `services/auth.js` searches them the way a server would search a table.
+
+The home page has two buttons worth clicking: a dead link, which lands on the `notfound` route, and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
 
 > **Paths must start from the root** (`/main.js`, `/theme.css`, `/partials/…`). A relative path resolves against the current route and breaks on any multi-segment URL. ES module imports are the exception: they resolve against the module, so they stay relative.
 
@@ -61,6 +63,7 @@ stores/           Alpine stores — state that outlives a page
 models/           maps API payloads into the app's own shapes
 services/         talks to the outside world; the only place that knows endpoints
 lib/              helpers, portable to any project
+mock/             fake data and latency, until a real API exists
 ```
 
 ## What the framework gives you

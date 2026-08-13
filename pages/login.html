@@ -1,7 +1,11 @@
 <main class="flex flex-1 items-center justify-center p-4" x-data="loginPage">
   <div class="card w-full max-w-sm p-6">
     <h1 class="text-lg font-semibold text-gray-900">Sign in</h1>
-    <p class="muted mt-1">Demo: <span class="font-mono">demo@shop.test</span> / <span class="font-mono">test1234</span></p>
+
+    <p class="mt-3 rounded-lg border-l-4 border-amber-400 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+      Demo account — <span class="font-mono">demo@shop.test</span> / <span class="font-mono">test1234</span>.
+      Users live in <span class="font-mono">mock/users.json</span>.
+    </p>
 
     <form class="mt-5 flex flex-col gap-4" @submit.prevent="submit()">
       <div>
