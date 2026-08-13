@@ -1,0 +1,11 @@
+/* Loaded with a <link>, so it applies before any JavaScript runs.
+   Everything that must be true on the first paint belongs here; the rest is in theme.css. */
+
+html {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Hides the app until Alpine initialises. Without this the raw markup flashes. */
+[x-cloak] {
+  display: none !important;
+}
