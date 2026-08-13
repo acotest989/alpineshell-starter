@@ -1,4 +1,4 @@
-// Fake latency so loading states stay visible. Its importers are the list of what is still mocked.
+// Fake network delay, so loading states are visible while there is no real API.
 
 export const MOCK_LATENCY = 700;
 
