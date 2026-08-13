@@ -15,7 +15,7 @@ Sign in on `/login` with `demo@shop.test` / `test1234` — users live in `mock/u
 
 The home page has two buttons worth clicking: a dead link, which lands on the `notfound` route, and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
 
-> **Paths must start from the root** (`/main.js`, `/theme.css`, `/partials/…`). A relative path resolves against the current route and breaks on any multi-segment URL. ES module imports are the exception: they resolve against the module, so they stay relative.
+> **Paths must start from the root** (`/main.js`, `/assets/theme.css`, `/partials/…`). A relative path resolves against the current route and breaks on any multi-segment URL. ES module imports are the exception: they resolve against the module, so they stay relative.
 
 ## Adding a page
 
@@ -49,7 +49,9 @@ The route value is a **page name**. From it the framework derives the template (
 index.html        shell: toast slot and #page render target
 main.js           the whole configuration of your app
 app.js            state and methods shared by every page
-theme.css         design system (.card, .btn, .input, .badge, .skeleton…)
+assets/
+  main.css        loaded with a <link>: base font and x-cloak, before any JS runs
+  theme.css       design system (.card, .btn, .input, .badge, .skeleton…)
 
 alpineshell/      the framework
   index.js        createApp() — the only entry point an app needs
