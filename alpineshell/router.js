@@ -58,6 +58,17 @@ function authGuard(ctx) {
   }
 }
 
+// A protected prefix is only a condition — it does not create a route. Without a matching
+// one, a signed-in visitor reaches the guard, passes, and lands on notfound.
+function warnAboutOrphanGuards() {
+  const paths = Object.keys(config.routes);
+  const orphans = config.protected.filter((prefix) => !paths.some((path) => path.startsWith(prefix)));
+
+  if (orphans.length) {
+    console.warn(`AlpineShell: protected prefixes with no route — ${orphans.join(', ')}`);
+  }
+}
+
 // --- title ---
 export function setPageTitle(name) {
   document.title = name ? `${name} — ${config.siteName}` : config.siteName;
@@ -101,6 +112,8 @@ export const router = {
         ].filter(Boolean),
       });
     }
+
+    if (config.debug) warnAboutOrphanGuards();
   },
 
   // Spread into the component, so `this` reaches its state.

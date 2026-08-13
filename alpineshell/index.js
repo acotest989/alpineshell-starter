@@ -64,7 +64,7 @@ export function createApp({
   configureRouter({
     routes, titles, protected: protectedRoutes,
     siteName, loginPath, homePath,
-    pagesDir, partialsDir, targetId, header, footer,
+    pagesDir, partialsDir, targetId, header, footer, debug,
   });
 
   // Stores first: a page component may read one while initialising.
