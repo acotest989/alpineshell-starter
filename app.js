@@ -1,9 +1,9 @@
 import { consumeRedirect } from './alpineshell/index.js';
-import { money } from './lib/format.js';
+import { formatDate } from './lib/format.js';
 
 // Merged into AlpineShell's root component — available to every page and partial.
 export const app = {
-  money,
+  formatDate,
 
   async signIn(email, password) {
     await this.$store.session.signIn(email, password);

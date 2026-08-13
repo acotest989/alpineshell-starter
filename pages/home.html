@@ -5,5 +5,8 @@
   <div class="card mt-6 p-4">
     <p class="eyebrow">Signed in as</p>
     <p class="mt-1 text-sm text-gray-900" x-text="$store.session.user?.name ?? 'nobody'"></p>
+
+    <p class="eyebrow mt-4">Loaded at</p>
+    <p class="mt-1 text-sm text-gray-900" x-text="formatDate(loadedAt, { dateStyle: 'medium', timeStyle: 'short' })"></p>
   </div>
 </main>
