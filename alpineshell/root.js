@@ -1,13 +1,7 @@
-import { http, errorMessage } from './http.js';
+import { http } from './http.js';
 import { router } from './router.js';
 
-// Partials are markup shared across routes; pages own their own file.
-async function loadPartials(names, dir) {
-  const pairs = await Promise.all(
-    names.map(async (name) => [name, await http.get(`${dir}/${name}.html`)])
-  );
-  return Object.fromEntries(pairs);
-}
+const PARTIAL_TIMEOUT = 5000; // local files; a longer wait would only stall the boot
 
 // The root component every page is nested in: navigation, shared markup, app-wide errors.
 // `extend` is merged in, so the app can add its own state and methods.
@@ -23,16 +17,23 @@ export function createRoot({ partials = [], partialsDir = '/partials', extend = 
     async init() {
       this.initRouter();
       this.watchRouter();
-
-      try {
-        this.partials = await loadPartials(partials, partialsDir);
-      } catch (err) {
-        console.error(err);
-        this.errMsg = errorMessage(err, 'Error while loading.');
-      }
+      this.loadPartials();
 
       await extend.init?.call(this);
       if (debug) console.log('App is ready.');
+    },
+
+    // Not awaited: each partial renders the moment it lands, and one that fails
+    // leaves the rest of the page standing.
+    loadPartials() {
+      partials.forEach((name) => {
+        http.get(`${partialsDir}/${name}.html`, { timeout: PARTIAL_TIMEOUT })
+          .then((html) => (this.partials[name] = html))
+          .catch((err) => {
+            console.error(`AlpineShell: partial '${name}' failed —`, err);
+            this.errMsg = `Could not load: ${name}`;
+          });
+      });
     },
   });
 }
