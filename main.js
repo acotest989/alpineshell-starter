@@ -1,4 +1,4 @@
-import { createApp } from './alpineshell/index.js';
+import { createApp } from 'alpineshell';
 
 import { app } from './app.js';
 import { session } from './stores/session.js';
