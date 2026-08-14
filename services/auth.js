@@ -1,4 +1,4 @@
-import { http } from '../alpineshell/index.js';
+import { http } from 'alpineshell';
 import { sleep } from '../mock/latency.js';
 import { toUser } from '../models/user.js';
 

@@ -1,4 +1,4 @@
-import { consumeRedirect } from './alpineshell/index.js';
+import { consumeRedirect } from 'alpineshell';
 import { formatDate } from './lib/format.js';
 
 // Merged into AlpineShell's root component — available to every page and partial.

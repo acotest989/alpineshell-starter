@@ -1,12 +1,20 @@
-# AlpineShell
+# AlpineShell Starter
 
 Structure and conventions for [Alpine.js](https://alpinejs.dev) apps: routing, pages, partials and stores — **without a build step**. Every dependency comes from a CDN as an ES module; there is no package manager and nothing to compile.
 
-This repository is both the framework (`alpineshell/`) and a starter you can build on.
+The framework lives in its own repository — [alpineshell](https://github.com/acotest989/alpineshell) — and is pulled from a CDN, pinned to a tag in the import map in `index.html`. This repository is the app around it.
+
+## Start a project
+
+Press **Use this template** on GitHub, or copy it locally without any history:
+
+```bash
+npx degit acotest989/alpineshell-starter my-app
+```
 
 ## Getting started
 
-1. Open this folder in VS Code (as the workspace root, so `.vscode/settings.json` applies).
+1. Open the folder in VS Code (as the workspace root, so `.vscode/settings.json` applies).
 2. Start Live Server.
 
 That is it. `liveServer.settings.file` is the SPA fallback: every 404 returns `index.html`, so a refresh on `/some/deep/route` still boots the app.
@@ -53,12 +61,6 @@ assets/
   main.css        loaded with a <link>: base font and x-cloak, before any JS runs
   theme.css       design system (.card, .btn, .input, .badge, .skeleton…)
 
-alpineshell/      the framework
-  index.js        createApp() — the only entry point an app needs
-  router.js       routes, guards, titles, navigation events
-  root.js         root component and partial loading
-  http.js         fetch wrapper: auto JSON, throws on !ok, timeout, query params
-
 pages/            one .html + one .js per route
 partials/         markup reused across routes
 stores/           Alpine stores — state that outlives a page
@@ -77,7 +79,7 @@ mock/             fake data and latency, until a real API exists
 - **Navigation manners** the router does not do for you: scroll reset, focus movement, page titles, cleared errors.
 - **`http`**, a fetch wrapper that parses JSON, throws `HttpError` with the server's body, and supports timeouts and query params.
 
-Every option, with defaults, is documented above `createApp()` in `alpineshell/index.js` and listed commented-out in `main.js`.
+Every option is listed commented-out in `main.js`, and documented in the [framework README](https://github.com/acotest989/alpineshell#options).
 
 ## Design decisions
 
@@ -89,7 +91,7 @@ Every option, with defaults, is documented above `createApp()` in `alpineshell/i
 
 ## Dependencies
 
-Alpine.js, [Pinecone Router](https://github.com/rehhouari/pinecone-router), `@alpinejs/persist`, Tailwind CSS — all from jsDelivr, all pinned in `alpineshell/index.js`.
+Alpine.js, [Pinecone Router](https://github.com/rehhouari/pinecone-router), `@alpinejs/persist`, Tailwind CSS — all from jsDelivr, all pinned by the framework.
 
 ## License
 
