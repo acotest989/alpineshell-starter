@@ -29,7 +29,9 @@ function loadTheme(url) {
  *           { page, header, footer } when a route needs different chrome
  * titles    page name -> title; anything missing falls back to the name
  * protected route prefixes that require a session
- * partials  names under /partials, loaded once into app.partials
+ * partials  names under /partials that you render yourself with x-html, loaded once
+ *           into app.partials. Header and footer are not listed here — the router
+ *           adds them to each route's templates, per route rather than globally.
  * pages     component name -> factory, registered as-is
  * stores    store name -> factory
  * app       extra state and methods merged into the root component
@@ -70,6 +72,14 @@ export function createApp({
   // Stores first: a page component may read one while initialising.
   for (const [name, factory] of Object.entries(stores)) Alpine.store(name, factory());
   for (const [name, factory] of Object.entries(pages)) Alpine.data(name, factory);
+
+  // The router already fetches the chrome; listing it again downloads it twice.
+  if (debug) {
+    const duplicated = partials.filter((name) => name === header || name === footer);
+    if (duplicated.length) {
+      console.warn(`AlpineShell: ${duplicated.join(', ')} is chrome — drop it from 'partials' to avoid a second fetch`);
+    }
+  }
 
   Alpine.data('app', createRoot({ partials, partialsDir, extend: app, debug }));
 

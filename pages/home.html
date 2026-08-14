@@ -29,7 +29,10 @@
       <p class="mt-1 text-sm text-gray-900" x-text="formatDate(loadedAt, { timeStyle: 'medium' })"></p>
     </div>
 
-    <a href="/nowhere" class="btn btn-ghost btn-sm ml-auto">Try a dead link</a>
+    <button type="button" class="btn btn-ghost btn-sm ml-auto" @click="errMsg = 'Something went wrong. This is the toast.'">
+      Trigger an error
+    </button>
+    <a href="/nowhere" class="btn btn-ghost btn-sm">Try a dead link</a>
     <a href="/account" class="btn btn-primary btn-sm">Try a guarded route</a>
   </div>
 

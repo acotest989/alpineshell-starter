@@ -28,7 +28,8 @@ createApp({
   },
 
   stores: { session }, // register new store here
-  partials: ['header', 'footer', 'toast'], // register new partial here
+  // Only partials you render yourself with x-html; header and footer are fetched by the router.
+  partials: ['toast'],
   pages: { homePage, loginPage }, // register new page component here
 
   // Defaults in effect — uncomment to change:
