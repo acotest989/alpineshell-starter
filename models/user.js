@@ -1,11 +1,7 @@
-// What a user is in this app. The API's shape stops here.
-// Every service maps its responses through a model, so pages never see a raw payload.
-
-export function toUser(raw) {
+export function toUser(record) {
   return {
-    id: raw.id ?? null,
-    name: raw.name ?? raw.username ?? raw.email,
-    email: raw.email,
-    token: raw.token ?? null,
+    id: record.id,
+    name: record.name || record.email.split('@')[0],
+    email: record.email,
   };
 }

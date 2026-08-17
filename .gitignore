@@ -1,2 +1,9 @@
 .DS_Store
 Thumbs.db
+
+# The PocketBase binary: ~33MB, one per platform, and fetched by server/setup.sh
+# from the version pinned in server/.pb-version. pb_data is the database itself.
+server/pocketbase
+server/pocketbase.exe
+server/pb_data/
+server/*.zip
