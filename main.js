@@ -4,6 +4,12 @@ import { app } from './app.js';
 import { session } from './stores/session.js';
 import { homePage } from './pages/home.js';
 import { loginPage } from './pages/login.js';
+import { registerPage } from './pages/register.js';
+import { verifyPage } from './pages/verify.js';
+import { forgotPage } from './pages/forgot.js';
+import { resetPage } from './pages/reset.js';
+import { confirmEmailPage } from './pages/confirm-email.js';
+import { accountPage } from './pages/account.js';
 
 createApp({
   app, // state and methods merged into the root component, reachable from every page
@@ -17,6 +23,12 @@ createApp({
     notfound: '404',
     '/': 'home',
     '/login': { page: 'login', header: false, footer: false },
+    '/register': { page: 'register', header: false, footer: false },
+    // The paths the mail templates link to; the token is the whole point of the route.
+    '/verify/:token': { page: 'verify', header: false, footer: false },
+    '/forgot-password': { page: 'forgot', header: false, footer: false },
+    '/reset-password/:token': { page: 'reset', header: false, footer: false },
+    '/confirm-email/:token': { page: 'confirm-email', header: false, footer: false },
     '/account': 'account',
   },
 
@@ -25,12 +37,22 @@ createApp({
   // Overrides only — a page with no entry gets its own name as the title.
   titles: {
     404: 'Page not found',
+    login: 'Sign in',
+    register: 'Create an account',
+    verify: 'Verify your email',
+    forgot: 'Reset your password',
+    reset: 'Set a new password',
+    'confirm-email': 'Confirm your new email',
   },
 
   stores: { session }, // register new store here
   // Only partials you render yourself with x-html; header and footer are fetched by the router.
   partials: ['toast'],
-  pages: { homePage, loginPage }, // register new page component here
+  // register new page component here
+  pages: {
+    homePage, loginPage, registerPage, verifyPage,
+    forgotPage, resetPage, confirmEmailPage, accountPage,
+  },
 
   // Defaults in effect — uncomment to change:
   // siteName: document.title,   // suffix after the page title

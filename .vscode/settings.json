@@ -1,4 +1,24 @@
 {
   "liveServer.settings.root": "/",
-  "liveServer.settings.file": "index.html"
+  "liveServer.settings.file": "index.html",
+
+  // PocketBase writes to server/pb_data on every save, and Live Server would reload
+  // the page mid-request. The first three are its own defaults, which this replaces.
+  "liveServer.settings.ignoreFiles": [
+    ".vscode/**",
+    "**/*.scss",
+    "**/*.sass",
+    "**/pb_data/**",
+    "**/*.db",
+    "**/*.db-wal",
+    "**/*.db-shm"
+  ],
+
+  // Only needed if you serve the frontend with Live Server instead of PocketBase;
+  // without it the API is on another origin.
+  "liveServer.settings.proxy": {
+    "enable": false,
+    "baseUri": "/api",
+    "proxyUri": "http://127.0.0.1:8090/api"
+  }
 }

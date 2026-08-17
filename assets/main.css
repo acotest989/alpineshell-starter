@@ -9,3 +9,8 @@ html {
 [x-cloak] {
   display: none !important;
 }
+
+/* Tailwind v4 dropped this from its preflight. */
+button:not(:disabled) {
+  cursor: pointer;
+}
