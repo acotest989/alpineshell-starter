@@ -27,13 +27,25 @@ Then open `http://127.0.0.1:8090`. The binary is not in git — ~33 MB, one per 
 
 `--indexFallback` is on by default and is the SPA fallback: an unknown path returns `index.html`, so a refresh on `/some/deep/route` still boots the app. Same origin, so there is nothing to configure for CORS and no host anywhere in the code.
 
-**No account ships with this template.** Records are data, not schema, so nothing in git could carry one — and a starter with known credentials in it would deploy with known credentials in it. Register your own on `/register`. Everything except the account pages works signed out, so you can also leave the server off while you build the front.
+**No account ships with this template.** Records are data, not schema, so nothing in git could carry one — and a starter with known credentials in it would deploy with known credentials in it. Register your own on `/register`.
 
 The home page has two buttons worth clicking: a dead link, which lands on the `notfound` route, and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
 
-Live Server still works if you want reload-on-save, but then the API is on another origin: switch on the proxy in `.vscode/settings.json`.
+PocketBase serves the files as well as the API, so it is what you run. If you want reload-on-save instead, start Live Server and switch on the proxy in `.vscode/settings.json` — the app then comes from one port and `/api` is forwarded to the other, which is why `services/pb.js` can stay pointed at `/` either way. PocketBase still has to be running: it is the backend, not a dev server.
 
 > **Paths must start from the root** (`/main.js`, `/assets/theme.css`, `/partials/…`). A relative path resolves against the current route and breaks on any multi-segment URL. ES module imports are the exception: they resolve against the module, so they stay relative.
+
+## Make it yours
+
+Five things carry the template's name rather than your project's:
+
+| | |
+|---|---|
+| `lib/storage.js` | `APP` — the prefix on every persisted key. Two apps served from `localhost` share one storage area, and an unprefixed `auth` would be shared with them. |
+| `index.html` | `<title>` and the description; the title is also the suffix after every page title. |
+| `partials/header.html` | the brand, which currently reads `App`. |
+| `favicon.svg` | drawn for this template — replace it. |
+| `server/.pb-version` | leave it, but know it is where PocketBase's version lives. |
 
 ## Adding a page
 
@@ -61,6 +73,71 @@ pages: { aboutPage },
 
 The route value is a **page name**. From it the framework derives the template (`/pages/about.html`) and the title (`About`, overridable in `titles`). The page's own markup names its component.
 
+## Adding data of your own
+
+The first real task after cloning. Say you want notes.
+
+**1. The collection.** In the dashboard, `Collections → New`, called `notes`, with a `title` text field and a `body` editor field. Set the API rules so a note belongs to whoever made it — a `user` relation to `users`, and `@request.auth.id = user.id` on view, update and delete. PocketBase writes a migration into `server/pb_migrations/` as you go; commit it, and a fresh checkout gets the same collection.
+
+**2. The service.** One file that knows the endpoint, and the only file allowed to import `pb`:
+
+```js
+// services/notes.js
+import { pb } from './pb.js';
+import { toNote } from '../models/note.js';
+
+export async function fetchNotes() {
+  const records = await pb.collection('notes').getFullList({ sort: '-created' });
+  return records.map(toNote);
+}
+```
+
+**3. The model.** Where PocketBase's shape stops:
+
+```js
+// models/note.js
+export function toNote(record) {
+  return {
+    id: record.id,
+    title: record.title,
+    body: record.body,
+    createdAt: record.created,
+  };
+}
+```
+
+**4. The page.** It asks the service and never learns where the answer came from:
+
+```js
+// pages/notes.js
+import { fetchNotes } from '../services/notes.js';
+import { errorMessage } from 'alpineshell';
+
+export const notesPage = () => ({
+  notes: [],
+  pending: true,
+  error: '',
+
+  async init() {
+    try {
+      this.notes = await fetchNotes();
+    } catch (err) {
+      this.error = errorMessage(err, 'Could not load your notes.');
+    } finally {
+      this.pending = false;
+    }
+  },
+});
+```
+
+The rule that makes this worth the four files: **a page never imports `pb`.** The moment one does, the app knows which database it is talking to, and swapping it stops being a job for one folder. The account pages follow the same rule — `services/auth.js` is the only thing that touches the SDK's auth.
+
+Filtering user input needs `pb.filter()` rather than string building, for the same reason a SQL query does:
+
+```js
+pb.collection('notes').getList(1, 20, { filter: pb.filter('title ~ {:q}', { q }) });
+```
+
 ## Layout
 
 ```
@@ -68,7 +145,7 @@ index.html        shell: toast slot and #page render target
 main.js           the whole configuration of your app
 app.js            state and methods shared by every page
 assets/
-  main.css        loaded with a <link>: base font and x-cloak, before any JS runs
+  main.css        loaded with a <link>: base font, x-cloak, cursor — before any JS runs
   theme.css       design system (.card, .btn, .input, .badge, .skeleton…)
 
 pages/            one .html + one .js per route
@@ -89,6 +166,10 @@ Three of those arrive by email, so PocketBase's mail templates have to link back
 Two behaviours worth knowing before they surprise you. Changing a password or an email invalidates every token the account has, so the app signs itself out on purpose. And `/forgot-password` answers the same way whether or not the address is registered, because the honest answer would tell a stranger who has an account here.
 
 Rate limits are on, as a migration rather than a dashboard toggle — settings are the one thing PocketBase does not write to `pb_migrations/` by itself. The mail endpoints are the reason: each call sends a message to whatever address was posted, so without a limit anyone can flood a stranger's inbox from your server.
+
+## Deploying
+
+`server/Dockerfile` builds one image with the binary, the migrations and the frontend inside it — the commands are in [server/README.md](server/README.md), along with the list of things that have to be true before the URL is public. Anywhere that runs a container and gives you a persistent volume will do: PocketBase keeps everything in `pb_data`, so the volume *is* the deployment.
 
 ## What the framework gives you
 
