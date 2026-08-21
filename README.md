@@ -14,7 +14,7 @@ Press **Use this template** on GitHub, or copy it locally without any history:
 npx degit acotest989/alpineshell-starter my-app
 cd my-app/server
 
-./setup.sh                                                  # or .\setup.ps1 — fetches the pinned PocketBase
+./setup.sh                                                  # downloads PocketBase — .\setup.ps1 on Windows
 ./pocketbase serve --publicDir=..                           # app and API on http://127.0.0.1:8090
 ./pocketbase superuser create you@example.com yourpassword  # first run only
 ```
@@ -34,7 +34,7 @@ One process serves the app and answers its API. Mail setup, the dashboard's mail
 
 **No account ships with this template.** Records are data, not schema, so nothing in git could carry one — and a starter with known credentials in it would deploy with known credentials in it. Register your own on `/register`.
 
-The home page is a row of things worth clicking: three that raise a toast, one for each temper the partial knows; a dead link, which lands on the `notfound` route; and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
+The home page is a row of things worth clicking: four that raise a toast, one for each temper the partial knows; a dead link, which lands on the `notfound` route; and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
 
 PocketBase serves the files as well as the API, so it is what you run. If you want reload-on-save instead, start Live Server and switch on the proxy in `.vscode/settings.json` — the app then comes from one port and `/api` is forwarded to the other, which is why `services/pb.js` can stay pointed at `/` either way. PocketBase still has to be running: it is the backend, not a dev server.
 
@@ -199,6 +199,8 @@ Every option is listed commented-out in `main.js`, and documented in the [framew
 **State ownership.** Page state belongs to the page component. State shared across routes and written from outside Alpine belongs in a store. The session is a mirror rather than a copy: the PocketBase SDK owns the token and persists it, and `stores/session.js` only makes it reactive. Two places claiming to know who is signed in is a bug waiting for a slow day.
 
 **One file knows the backend.** `services/pb.js` is the only thing that imports the SDK, and `services/auth.js` is the only thing that talks to its auth. Swapping PocketBase for something else is those two files and the models, never a page.
+
+**The backend has three gears.** Collection rules and the SDK cover most of it; `pb_hooks/` takes anything the client must not decide, in JavaScript; and when that runs out, PocketBase is a Go module you import into your own `main.go` — same database, same dashboard, your own binary. The database is SQLite throughout, which is a decision rather than a gap: Postgres is not supported and not planned. Worth knowing the ceiling before you build against it — [server/README.md](server/README.md) has the detail.
 
 ## Dependencies
 

@@ -7,10 +7,18 @@ The binary is not in git: ~33 MB, one build per platform, and the deploy uses th
 ```bash
 ./setup.sh                                           # or .\setup.ps1 on Windows
 ./pocketbase serve --publicDir=..                    # http://127.0.0.1:8090
-./pocketbase superuser create you@example.com pass   # first run only
+./pocketbase superuser create you@example.com yourpassword   # first run only
 ```
 
 Re-running the setup script is how you upgrade: bump `.pb-version`, run it again, read the changelog first.
+
+`uname` decides which build it fetches, so you get the one for the machine you are on. You rarely need another: the Dockerfile downloads the Linux build itself while the image is being built, from `TARGETARCH`, so deploying from Windows or a Mac takes nothing extra. When you do need one by hand, the asset name is the whole trick:
+
+```
+https://github.com/pocketbase/pocketbase/releases/download/v<version>/pocketbase_<version>_<os>_<arch>.zip
+```
+
+`<os>` is `linux`, `darwin` or `windows`, and `<arch>` is `amd64` or `arm64`. Unzip it somewhere other than `server/`, or you replace the binary you actually run.
 
 `--publicDir=..` makes PocketBase serve the app as well as the API: one origin, no CORS, and `--indexFallback` (on by default) sends unknown paths to `index.html`, which is the SPA fallback the router needs. So `services/pb.js` points at `/` and there is no host anywhere in the code.
 
@@ -67,6 +75,18 @@ docker run -p 8090:8090 -v pb_data:/pb/pb_data app
 It copies the frontend into `pb_public/` **file by file**, on purpose. Copying the repository and deleting `server/` afterwards works right up until somebody forgets, and then `pb_data/data.db` is a public download.
 
 Mount `pb_data` as a volume or the first redeploy takes every account with it.
+
+## How far it goes
+
+Three gears, and you change up only when the one below runs out.
+
+**The API.** The browser talks to collections through the SDK, and `services/` is the only place that knows it. The rules on a collection decide who may read and write what. For most of an app that is the entire backend.
+
+**Hooks.** Anything the client must not decide goes in `pb_hooks/` as JavaScript — pricing an order, stamping a field, refusing a request. They run inside PocketBase; their shape and their limits are in [pb_hooks/README.md](pb_hooks/README.md).
+
+**Go.** When a hook wants a real library, a transaction across collections or a scheduled job, PocketBase is also a Go module: your own `main.go` imports it, registers routes and hooks, and compiles to one binary that is still PocketBase, with the same database and the same dashboard. What changes is this folder — from then on you build and ship your own binary, so `setup.sh` and `.pb-version`, which fetch an official release, no longer apply.
+
+**The database is SQLite, and only SQLite.** That is a decision and not a gap: PostgreSQL and MySQL are not supported and are not planned. The connection can be pointed at something SQLite-compatible — a replicated build, for instance — but not at another engine. An app that genuinely needs Postgres has two honest options: keep PocketBase for auth and the dashboard while your own Go code owns the Postgres tables, which is two databases and all the bookkeeping that implies, or accept that it has outgrown this.
 
 ## Scale, honestly
 
