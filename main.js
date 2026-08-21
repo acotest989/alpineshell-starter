@@ -14,7 +14,7 @@ import { accountPage } from './pages/account.js';
 createApp({
   app, // state and methods merged into the root component, reachable from every page
   theme: '/assets/theme.css',
-  debug: true, // boot log + window.dbg
+  debug: true, // boot log, window.dbg, warnings, and a marker where a partial failed
 
   // path -> page name. The name gives the template (/pages/<name>.html) and the title.
   // Use an object when a route needs different chrome than the rest:
