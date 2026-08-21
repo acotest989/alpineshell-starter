@@ -6,7 +6,7 @@ export const homePage = () => ({
     {
       where: 'server/',
       title: 'A backend, in one binary',
-      detail: 'PocketBase holds the database, auth and API — and serves this page, so there is no second process and no CORS.',
+      detail: 'The database, auth and API in one binary that serves this page too — no second process, no CORS. Extend it with JavaScript hooks, or in Go when those run out.',
     },
     {
       where: 'services/auth.js',

@@ -3,8 +3,8 @@
   <div class="flex items-start gap-4">
     <img src="/favicon.svg" alt="" width="48" height="48" class="rounded-xl">
     <div>
-      <h1 class="text-2xl font-semibold tracking-tight text-gray-900">AlpineShell</h1>
-      <p class="muted mt-1">An Alpine.js front end and a PocketBase back end — one process, nothing to compile, no package manager.</p>
+      <h1 class="text-2xl font-semibold tracking-tight text-gray-900">AlpineShell Starter</h1>
+      <p class="muted mt-1">A full-stack app with nothing to compile: an Alpine.js front end over a PocketBase back end, one process, one origin, no package manager.</p>
     </div>
   </div>
 
@@ -20,21 +20,9 @@
     </template>
   </div>
 
-  <h2 class="mt-8 text-sm font-semibold text-gray-900">Where you edit</h2>
-
-  <div class="mt-3 grid gap-4 sm:grid-cols-3">
-    <template x-for="step in steps" :key="step.title">
-      <div class="card border-t-2 border-t-amber-400 p-4">
-        <p class="eyebrow text-amber-600" x-text="step.where"></p>
-        <p class="mt-1 text-sm font-medium text-gray-900" x-text="step.title"></p>
-        <p class="muted mt-2 text-xs leading-relaxed" x-text="step.detail"></p>
-      </div>
-    </template>
-  </div>
-
   <h2 class="mt-8 text-sm font-semibold text-gray-900">Try it</h2>
 
-  <div class="card mt-3 flex flex-wrap items-center gap-x-8 gap-y-3 p-4">
+  <div class="card mt-3 flex flex-wrap items-start gap-x-8 gap-y-4 p-4">
     <div>
       <p class="eyebrow">Session</p>
       <p class="mt-1 text-sm text-gray-900" x-text="$store.session.user?.name ?? 'Signed out'"></p>
@@ -45,7 +33,7 @@
       <p class="mt-1 text-sm text-gray-900" x-text="formatDate(loadedAt, { timeStyle: 'medium' })"></p>
     </div>
 
-    <div class="ml-auto">
+    <div>
       <p class="eyebrow">Toast</p>
       <div class="mt-1 flex flex-wrap gap-2">
         <button type="button" class="btn btn-ghost btn-sm" @click="notify('Something went wrong. This is the toast.', 'error')">
@@ -63,8 +51,46 @@
       </div>
     </div>
 
-    <a href="/nowhere" class="btn btn-ghost btn-sm">Try a dead link</a>
-    <a href="/account" class="btn btn-primary btn-sm">Try a guarded route</a>
+    <div class="ml-auto">
+      <p class="eyebrow">Routes</p>
+      <div class="mt-1 flex flex-wrap gap-2">
+        <a href="/nowhere" class="btn btn-ghost btn-sm">Dead link</a>
+        <a href="/account" class="btn btn-primary btn-sm">Guarded route</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mt-8 text-sm font-semibold text-gray-900">Every command there is</h2>
+
+  <div class="terminal mt-3">
+    <div class="terminal-bar">
+      <span class="terminal-dot bg-red-400"></span>
+      <span class="terminal-dot bg-amber-400"></span>
+      <span class="terminal-dot bg-green-400"></span>
+      <span class="ml-2 font-mono text-[11px] text-gray-500">my-app — bash</span>
+    </div>
+
+    <pre class="terminal-body"><code><span class="terminal-prompt">$</span> npx degit acotest989/alpineshell-starter my-app             <span class="terminal-note"># or "Use this template" on GitHub</span>
+<span class="terminal-prompt">$</span> cd my-app/server
+
+<span class="terminal-prompt">$</span> ./setup.sh                                                  <span class="terminal-note"># downloads PocketBase — .\setup.ps1 on Windows</span>
+<span class="terminal-prompt">$</span> ./pocketbase serve --publicDir=..                           <span class="terminal-note"># app and API on http://127.0.0.1:8090</span>
+<span class="terminal-prompt">$</span> ./pocketbase superuser create you@example.com yourpassword  <span class="terminal-note"># first run only, for the /_/ dashboard</span>
+
+<span class="terminal-prompt">$</span> docker build -f server/Dockerfile --build-arg PB_VERSION=$(cat server/.pb-version) -t my-app .
+<span class="terminal-prompt">$</span> docker run -p 8090:8090 -v pb_data:/pb/pb_data my-app       <span class="terminal-note"># the volume is the deployment</span></code></pre>
+  </div>
+
+  <h2 class="mt-8 text-sm font-semibold text-gray-900">Where you edit</h2>
+
+  <div class="mt-3 grid gap-4 sm:grid-cols-3">
+    <template x-for="step in steps" :key="step.title">
+      <div class="card border-t-2 border-t-amber-400 p-4">
+        <p class="eyebrow text-amber-600" x-text="step.where"></p>
+        <p class="mt-1 text-sm font-medium text-gray-900" x-text="step.title"></p>
+        <p class="muted mt-2 text-xs leading-relaxed" x-text="step.detail"></p>
+      </div>
+    </template>
   </div>
 
   <p class="muted mt-8 text-xs">

@@ -60,6 +60,14 @@
   .toast-success { @apply border-green-600 bg-green-100 ring-green-300 text-green-700; }
   .toast-info    { @apply border-blue-500  bg-blue-100  ring-blue-300  text-blue-700; }
 
+  /* The one dark surface on the page, because a terminal is a terminal. */
+  .terminal     { @apply overflow-hidden rounded-xl bg-gray-900 shadow-sm ring-1 ring-gray-800; }
+  .terminal-bar { @apply flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5; }
+  .terminal-dot { @apply h-2.5 w-2.5 rounded-full; }
+  .terminal-body { @apply overflow-x-auto p-4 font-mono text-xs leading-relaxed text-gray-200; }
+  .terminal-prompt { @apply select-none text-amber-400; } /* select-none: copying takes the command, not the $ */
+  .terminal-note   { @apply text-gray-500; }
+
   .skeleton { @apply animate-pulse rounded bg-gray-200; }
   .muted    { @apply text-sm text-gray-500; }
   .eyebrow  { @apply text-[11px] font-medium uppercase tracking-wider text-gray-400; }
