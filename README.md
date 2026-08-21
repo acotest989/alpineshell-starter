@@ -1,35 +1,40 @@
 # AlpineShell Starter
 
-Structure and conventions for [Alpine.js](https://alpinejs.dev) apps: routing, pages, partials and stores — **without a build step**. Every dependency comes from a CDN as an ES module; there is no package manager and nothing to compile.
+A full-stack starter with **no build step**: an [Alpine.js](https://alpinejs.dev) front end — routing, pages, partials and stores — over a [PocketBase](https://pocketbase.io) back end that is the database, the auth, the file storage and the API in a single binary, and that serves the front end too. One process, one origin. Every frontend dependency comes from a CDN as an ES module; there is no package manager and nothing to compile.
+
+What is already built: **the whole account surface** — register, email verification, password reset, changing a name, an email or a password, deleting an account — with guarded routes, rate limits, and a `Dockerfile` that puts all of it in one image.
 
 The framework lives in its own repository — [alpineshell](https://github.com/acotest989/alpineshell) — and is pulled from a CDN, pinned to a tag in the import map in `index.html`. This repository is the app around it.
 
-## Start a project
+## Quick start
 
 Press **Use this template** on GitHub, or copy it locally without any history:
 
 ```bash
 npx degit acotest989/alpineshell-starter my-app
+cd my-app/server
+
+./setup.sh                                                  # or .\setup.ps1 — fetches the pinned PocketBase
+./pocketbase serve --publicDir=..                           # app and API on http://127.0.0.1:8090
+./pocketbase superuser create you@example.com yourpassword  # first run only
 ```
 
-## Getting started
+Open `http://127.0.0.1:8090`, register yourself on `/register`, and find the dashboard at `/_/`.
 
-One process serves the app and answers its API — see [server/README.md](server/README.md):
+Shipping it is one image with the binary, the migrations and the frontend inside. Everything lives in `pb_data`, so the volume *is* the deployment:
 
 ```bash
-cd server
-./setup.sh                 # or .\setup.ps1 — fetches the pinned PocketBase build
-./pocketbase serve --publicDir=..
-./pocketbase superuser create you@example.com yourpassword
+docker build -f server/Dockerfile --build-arg PB_VERSION=$(cat server/.pb-version) -t my-app .
+docker run -p 8090:8090 -v pb_data:/pb/pb_data my-app
 ```
 
-Then open `http://127.0.0.1:8090`. The binary is not in git — ~33 MB, one per platform — so it is downloaded from the version pinned in `server/.pb-version`, which is also what the Dockerfile builds with.
+One process serves the app and answers its API. Mail setup, the dashboard's mail templates and the list of things to do before the URL is public are in [server/README.md](server/README.md). The binary is not in git — ~33 MB, one per platform — so it is downloaded from the version pinned in `server/.pb-version`, which is also what the Dockerfile builds with.
 
 `--indexFallback` is on by default and is the SPA fallback: an unknown path returns `index.html`, so a refresh on `/some/deep/route` still boots the app. Same origin, so there is nothing to configure for CORS and no host anywhere in the code.
 
 **No account ships with this template.** Records are data, not schema, so nothing in git could carry one — and a starter with known credentials in it would deploy with known credentials in it. Register your own on `/register`.
 
-The home page has two buttons worth clicking: a dead link, which lands on the `notfound` route, and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
+The home page is a row of things worth clicking: three that raise a toast, one for each temper the partial knows; a dead link, which lands on the `notfound` route; and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
 
 PocketBase serves the files as well as the API, so it is what you run. If you want reload-on-save instead, start Live Server and switch on the proxy in `.vscode/settings.json` — the app then comes from one port and `/api` is forwarded to the other, which is why `services/pb.js` can stay pointed at `/` either way. PocketBase still has to be running: it is the backend, not a dev server.
 
@@ -177,8 +182,9 @@ Rate limits are on, as a migration rather than a dashboard toggle — settings a
 - **Pages** as plain HTML + a component factory, fetched on demand.
 - **A root component** every page is nested in, so shared state and methods are one scope away.
 - **Sessions** through an Alpine store, so code outside Alpine (the guard) can read them reactively.
-- **Navigation manners** the router does not do for you: scroll reset, focus movement, page titles, cleared messages.
-- **Messages** — `notify(text, type)` and one `message` object; errors wait to be dismissed, everything else clears itself. `partials/toast.html` decides how each type looks.
+- **Navigation manners** the router does not do for you: focus movement, page titles, cleared messages, and a page you arrive at starting at the top while back and forward keep the place they had.
+- **Messages** — `notify(text, type)` and one `message` object; errors wait to be dismissed, everything else clears itself. `partials/toast.html` gives four tempers a colour apiece — error, warning, success, info — from the `.toast-*` variants in `theme.css`.
+- **Failures that would otherwise be a blank page** — a template that will not load, a partial that will not load, a page whose `init()` throws. Each ends as a message rather than an empty screen.
 - **Forms** — `form()` owns the submit sequence, so a page keeps only `validate()` and `save()`. Every account page here is written that way; `pages/login.js` is the shortest example.
 - **`http`**, a fetch wrapper that parses JSON, throws `HttpError` with the server's body, and supports timeouts and query params.
 
@@ -186,7 +192,7 @@ Every option is listed commented-out in `main.js`, and documented in the [framew
 
 ## Design decisions
 
-**No build step is the point.** Tailwind runs through its browser build, which compiles CSS at runtime and only reads `<style type="text/tailwindcss">` tags — it supports neither `<link>` nor `@import` for local files. That is why `theme.css` is fetched and injected as a style tag. For production, swap in the Tailwind CLI and ship a compiled stylesheet.
+**No build step is the point.** Tailwind runs through its browser build, which compiles CSS at runtime and only reads `<style type="text/tailwindcss">` tags — it supports neither `<link>` nor `@import` for local files. That is why `theme.css` is fetched and injected as a style tag. The cost is real and deliberate: the compiler goes to the visitor along with the page. That suits an internal tool, an admin panel, a prototype, a small site, and does not suit a content site living on search traffic. There is no CLI path here — an app that needs a compiled stylesheet has outgrown this starter.
 
 **Data never reaches a page raw.** `services/` fetches, `models/` maps the response into your own shape, pages consume only that. Changing API means changing one file.
 
