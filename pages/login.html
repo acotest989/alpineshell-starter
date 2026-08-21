@@ -16,7 +16,8 @@
           type="email"
           required
           autocomplete="username"
-          x-model="email"
+          x-model="values.email"
+          @input="clear('email')"
           :disabled="pending"
           class="input mt-1"
         >
@@ -33,7 +34,8 @@
           type="password"
           required
           autocomplete="current-password"
-          x-model="password"
+          x-model="values.password"
+          @input="clear('password')"
           :disabled="pending"
           class="input mt-1"
         >
