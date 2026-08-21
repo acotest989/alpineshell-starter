@@ -10,7 +10,11 @@ The binary is not in git: ~33 MB, one build per platform, and the deploy uses th
 ./pocketbase superuser create you@example.com yourpassword   # first run only
 ```
 
-Re-running the setup script is how you upgrade: bump `.pb-version`, run it again, read the changelog first.
+Re-running the setup script is how you upgrade: bump `.pb-version`, run it again, read the changelog first. What the newest release is:
+
+```powershell
+(Invoke-RestMethod https://api.github.com/repos/pocketbase/pocketbase/releases/latest).tag_name
+```
 
 `uname` decides which build it fetches, so you get the one for the machine you are on. You rarely need another: the Dockerfile downloads the Linux build itself while the image is being built, from `TARGETARCH`, so deploying from Windows or a Mac takes nothing extra. When you do need one by hand, the asset name is the whole trick:
 
@@ -42,7 +46,7 @@ Settings are the exception to all of this: unlike collections, PocketBase does n
 
 Password reset, email verification and email changes need SMTP configured under **Settings → Mail settings**; the built-in sendmail will not deliver. [Mailpit](https://mailpit.axllent.org) is the easiest local option — it catches everything and shows it in a browser.
 
-The templates live under **Collections → users → Options**, and by default their links point at PocketBase's own dashboard. Point them here instead — the only required part of the URL is the token:
+The templates live under **Collections → users → Options**, and by default their links point at PocketBase's own dashboard, which a visitor has no account for. `pb_migrations/1787306200_mail_templates.js` already points them here, so a fresh checkout needs no clicking. What it sets, and what to keep if you rewrite the wording — the token is the only required part of the URL:
 
 | | |
 |---|---|
@@ -59,6 +63,7 @@ None of this matters on `127.0.0.1`, and all of it matters the day the URL is re
 - **Trusted proxy headers** (Settings → Application). Behind a reverse proxy every request appears to come from the proxy, so the rate limiter would count the whole world as one client and one flood would lock everybody out.
 - **Restrict the superuser** to your own IP or subnet, and turn on MFA for it.
 - **Backups to S3-compatible storage** on a schedule. A single-node SQLite database is exactly as durable as the disk under it.
+- **`{APP_URL}` under Settings → Application.** A fresh install sets it to `http://localhost:8090`, and every mail template builds its link from it — so locally nothing ever complains, and in production every verification and reset link sends your users to their own machine. Nothing fails loudly; you find out from the first real account.
 - **SMTP on the real domain**, with SPF and DKIM, or verification and reset mail lands in spam.
 - **`--publicDir` must point at the frontend only.** Serving the repository root would publish `server/pb_data/data.db`.
 - **Pin the version** and read the changelog before upgrading. PocketBase is pre-1.0 and its own documentation says backward compatibility is not guaranteed until then.

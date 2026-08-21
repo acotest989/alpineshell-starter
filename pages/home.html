@@ -81,6 +81,18 @@
 <span class="terminal-prompt">$</span> docker run -p 8090:8090 -v pb_data:/pb/pb_data my-app       <span class="terminal-note"># the volume is the deployment</span></code></pre>
   </div>
 
+  <h2 class="mt-8 text-sm font-semibold text-gray-900">Set up mail</h2>
+
+  <div class="card mt-3 border-t-2 border-t-amber-400 p-4">
+    <p class="muted text-xs leading-relaxed">
+      Verification, password reset and email changes each send a message, and the built-in sendmail does not deliver — so
+      registering succeeds and nothing turns up until SMTP is set under <span class="font-mono text-gray-700">Settings &rarr; Mail settings</span>.
+      <a href="https://mailpit.axllent.org" target="_blank" rel="noreferrer" class="underline hover:text-gray-900">Mailpit</a>
+      is the easiest one locally. The templates themselves already link back here rather than into the dashboard — that arrives
+      as a migration, so there is nothing to click.
+    </p>
+  </div>
+
   <h2 class="mt-8 text-sm font-semibold text-gray-900">Where you edit</h2>
 
   <div class="mt-3 grid gap-4 sm:grid-cols-3">

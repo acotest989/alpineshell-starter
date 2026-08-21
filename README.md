@@ -21,6 +21,8 @@ cd my-app/server
 
 Open `http://127.0.0.1:8090`, register yourself on `/register`, and find the dashboard at `/_/`.
 
+**Mail is the one thing not already wired**, and it is worth doing before you wonder why nothing arrives. Verification, password reset and email changes each send a message, and PocketBase's built-in sendmail will not deliver — so registering succeeds and the email never comes until SMTP is set under **Settings → Mail settings**. [Mailpit](https://mailpit.axllent.org) is the easiest local option: it catches everything and shows it in a browser. The templates themselves already link here rather than into PocketBase's dashboard; that arrives as a migration, so there is nothing to click. See [server/README.md](server/README.md).
+
 Shipping it is one image with the binary, the migrations and the frontend inside. Everything lives in `pb_data`, so the volume *is* the deployment:
 
 ```bash
@@ -34,7 +36,7 @@ One process serves the app and answers its API. Mail setup, the dashboard's mail
 
 **No account ships with this template.** Records are data, not schema, so nothing in git could carry one — and a starter with known credentials in it would deploy with known credentials in it. Register your own on `/register`.
 
-The home page is a row of things worth clicking: four that raise a toast, one for each temper the partial knows; a dead link, which lands on the `notfound` route; and a guarded one — signed out it bounces you to `/login` and brings you back to `/account` afterwards.
+The home page is the tour: what is already built, a panel of things worth clicking — four raise a toast, one for each temper the partial knows, one is a dead link that lands on the `notfound` route, and one is guarded, so signed out it bounces you to `/login` and brings you back afterwards — then every command there is, and where to start editing. Delete it once it has done its job.
 
 PocketBase serves the files as well as the API, so it is what you run. If you want reload-on-save instead, start Live Server and switch on the proxy in `.vscode/settings.json` — the app then comes from one port and `/api` is forwarded to the other, which is why `services/pb.js` can stay pointed at `/` either way. PocketBase still has to be running: it is the backend, not a dev server.
 
@@ -42,7 +44,7 @@ PocketBase serves the files as well as the API, so it is what you run. If you wa
 
 ## Make it yours
 
-Five things carry the template's name rather than your project's:
+Six things carry the template's name rather than your project's:
 
 | | |
 |---|---|
@@ -50,6 +52,7 @@ Five things carry the template's name rather than your project's:
 | `index.html` | `<title>` and the description; the title is also the suffix after every page title. |
 | `partials/header.html` | the brand, which currently reads `App`. |
 | `favicon.svg` | drawn for this template — replace it. |
+| `fly.toml` | the app name, and the region. Delete the file if you deploy elsewhere. |
 | `server/.pb-version` | leave it, but know it is where PocketBase's version lives. |
 
 ## Adding a page
@@ -151,7 +154,7 @@ main.js           the whole configuration of your app
 app.js            state and methods shared by every page
 assets/
   main.css        loaded with a <link>: base font, x-cloak, cursor — before any JS runs
-  theme.css       design system (.card, .btn, .input, .badge, .skeleton…)
+  theme.css       design system (.card, .btn, .input, .toast, .terminal…)
 
 pages/            one .html + one .js per route
 partials/         markup reused across routes
@@ -160,13 +163,16 @@ models/           maps API payloads into the app's own shapes
 services/         talks to the outside world; the only place that knows endpoints
 lib/              helpers, portable to any project
 server/           PocketBase: database, auth, files and API in one binary
+fly.toml          one deployment spelled out; delete it if you host elsewhere
 ```
 
 ## Accounts
 
 The whole surface is here and none of it is stubbed: register, email verification, password reset, changing your name, email or password, and deleting the account. `/account` is the only guarded route.
 
-Three of those arrive by email, so PocketBase's mail templates have to link back to this app rather than to its own dashboard — the table is in [server/README.md](server/README.md), along with SMTP.
+Three of those arrive by email, and their templates already link back to this app rather than to PocketBase's dashboard — that ships as a migration. SMTP is the part still left to you; both are in [server/README.md](server/README.md).
+
+Email and password is what this app wires, not what PocketBase can do. OAuth2 providers, one-time codes and multi-factor are all there and each starts as a switch under **Settings → Auth providers** — enabling one is settings, and giving it a button is a call in `services/auth.js`, where every other auth call already lives. [PocketBase's documentation](https://pocketbase.io/docs/authentication/) has the list.
 
 Two behaviours worth knowing before they surprise you. Changing a password or an email invalidates every token the account has, so the app signs itself out on purpose. And `/forgot-password` answers the same way whether or not the address is registered, because the honest answer would tell a stranger who has an account here.
 
@@ -175,6 +181,16 @@ Rate limits are on, as a migration rather than a dashboard toggle — settings a
 ## Deploying
 
 `server/Dockerfile` builds one image with the binary, the migrations and the frontend inside it — the commands are in [server/README.md](server/README.md), along with the list of things that have to be true before the URL is public. Anywhere that runs a container and gives you a persistent volume will do: PocketBase keeps everything in `pb_data`, so the volume *is* the deployment.
+
+`fly.toml` is one of those spelled out, for [Fly.io](https://fly.io), and three commands is the whole of it:
+
+```bash
+fly apps create my-app
+fly volumes create pb_data --size 1 --region fra
+fly deploy --build-arg PB_VERSION=$(cat server/.pb-version)
+```
+
+Then set the application URL and SMTP in the dashboard on the real domain, and walk the list in [server/README.md](server/README.md) before you hand the URL to anybody. Delete the file if you deploy somewhere else — nothing reads it but Fly.
 
 ## What the framework gives you
 

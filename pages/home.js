@@ -11,12 +11,12 @@ export const homePage = () => ({
     {
       where: 'services/auth.js',
       title: 'Accounts, none of them stubbed',
-      detail: 'Register, verify by email, reset a password, change name, email or password, delete the account. /account is guarded.',
+      detail: 'Register, verify by email, reset a password, change name, email or password, delete the account. /account is guarded, and easy to extend with OAuth2 and the other options in PocketBase settings.',
     },
     {
       where: 'server/Dockerfile',
       title: 'Ready to deploy',
-      detail: 'One image with the binary, the migrations and this frontend. Everything lives in pb_data, so the volume is the deployment.',
+      detail: 'One image with the binary, the migrations and this frontend inside. Everything lives in pb_data, so the volume is the deployment — and fly.toml has one host spelled out.',
     },
   ],
 
