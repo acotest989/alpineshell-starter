@@ -179,6 +179,7 @@ Rate limits are on, as a migration rather than a dashboard toggle — settings a
 - **Sessions** through an Alpine store, so code outside Alpine (the guard) can read them reactively.
 - **Navigation manners** the router does not do for you: scroll reset, focus movement, page titles, cleared messages.
 - **Messages** — `notify(text, type)` and one `message` object; errors wait to be dismissed, everything else clears itself. `partials/toast.html` decides how each type looks.
+- **Forms** — `form()` owns the submit sequence, so a page keeps only `validate()` and `save()`. Every account page here is written that way; `pages/login.js` is the shortest example.
 - **`http`**, a fetch wrapper that parses JSON, throws `HttpError` with the server's body, and supports timeouts and query params.
 
 Every option is listed commented-out in `main.js`, and documented in the [framework README](https://github.com/acotest989/alpineshell#options).
