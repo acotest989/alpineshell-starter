@@ -1,0 +1,35 @@
+# One worked deployment, not the only one — anywhere that runs a container and gives you
+# a persistent volume will do. This file is the Fly.io version of it:
+#
+#   fly apps create my-app
+#   fly volumes create pb_data --size 1 --region fra
+#   fly deploy --build-arg PB_VERSION=$(cat server/.pb-version)
+#
+# The build argument is passed on the command line rather than written in here, so the
+# PocketBase version still lives in server/.pb-version and nowhere else.
+
+app = "my-app"
+primary_region = "fra"
+
+[build]
+  dockerfile = "server/Dockerfile"
+
+[http_service]
+  internal_port = 8090
+  force_https = true
+
+  # One machine, awake. A second would be a second SQLite database with no idea the
+  # first exists, and a sleeping one hands the first visitor of the day a cold start.
+  auto_stop_machines = false
+  auto_start_machines = false
+  min_machines_running = 1
+
+# The database and every uploaded file. Without this the first redeploy takes the
+# accounts with it — the volume is the deployment.
+[[mounts]]
+  source = "pb_data"
+  destination = "/pb/pb_data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
