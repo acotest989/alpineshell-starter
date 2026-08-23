@@ -157,7 +157,7 @@ assets/
   theme.css       design system (.card, .btn, .input, .toast, .terminal…)
 
 pages/            one .html + one .js per route
-partials/         markup reused across routes
+partials/         markup reused across routes, and chrome that outlives them
 stores/           Alpine stores — state that outlives a page
 models/           maps API payloads into the app's own shapes
 services/         talks to the outside world; the only place that knows endpoints

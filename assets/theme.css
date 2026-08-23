@@ -1,5 +1,6 @@
 /* Design system — every partial builds from these, nothing styles itself from scratch.
-   ink = gray-900 (brand + primary action), amber = accent and warning, red = error,
+   ink = gray-900 (brand + primary action), amber = accent, and anything still waiting on
+   the visitor, red = failure, and anything that ended badly,
    green = something worked, blue = something worth knowing.
    Injected as <style type="text/tailwindcss"> by the framework; the browser build only reads style tags. */
 
@@ -48,6 +49,20 @@
   }
   .badge-ink  { @apply bg-gray-900 text-white shadow-sm; }
   .badge-warn { @apply bg-amber-100 text-amber-700; }
+
+  /* The quiet three, for a state rather than a shout: waiting, settled, and ended badly.
+     Amber stays for what still wants something from the visitor. */
+  .badge-soft { @apply bg-gray-100  text-gray-600; }
+  .badge-good { @apply bg-green-100 text-green-700; }
+  .badge-bad  { @apply bg-red-100   text-red-700; }
+
+  /* Not a badge: a badge announces a state, a tag is quiet metadata you can follow.
+     It takes its edge from a border rather than a fill, because gray-100 on the
+     gray-50 page barely shows. */
+  .tag {
+    @apply rounded-full border border-gray-300 bg-white px-2 py-0.5 text-xs text-gray-600
+           transition-colors hover:border-gray-400 hover:text-gray-900;
+  }
 
   /* The container carries its accent as a text colour, so the icon, the label and the close
      button inherit it and only the message itself overrides. Four variants, no ternaries. */
