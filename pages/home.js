@@ -36,6 +36,11 @@ export const homePage = () => ({
       title: 'Share state',
       detail: 'Anything that outlives a route, or that code outside Alpine has to write.',
     },
+    {
+      where: 'lib/',
+      title: 'Add a helper',
+      detail: 'helpers.js takes the ones with no subject yet. Import it where you need it, or hang it on app.js and every template can call it.',
+    },
   ],
 
   init() {
