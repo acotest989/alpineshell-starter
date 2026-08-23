@@ -149,7 +149,7 @@ pb.collection('notes').getList(1, 20, { filter: pb.filter('title ~ {:q}', { q })
 ## Layout
 
 ```
-index.html        shell: toast slot and #page render target
+index.html        shell: partial slots and the #page render target
 main.js           the whole configuration of your app
 app.js            state and methods shared by every page
 assets/
@@ -161,7 +161,7 @@ partials/         markup reused across routes
 stores/           Alpine stores — state that outlives a page
 models/           maps API payloads into the app's own shapes
 services/         talks to the outside world; the only place that knows endpoints
-lib/              helpers, portable to any project
+lib/              helpers, portable to any project; helpers.js is the drawer
 server/           PocketBase: database, auth, files and API in one binary
 fly.toml          one deployment spelled out; delete it if you host elsewhere
 ```
