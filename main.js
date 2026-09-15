@@ -34,6 +34,10 @@ createApp({
 
   protected: ['/account'], // prefix match: '/account' also covers '/account/orders'
 
+  // For what a session alone does not grant. Signed out still goes to the login page; signed
+  // in and refused goes home, before anything under the prefix renders:
+  // allow: { '/admin': (session) => session.user?.admin === true },
+
   // Overrides only — a page with no entry gets its own name as the title.
   titles: {
     404: 'Page not found',
