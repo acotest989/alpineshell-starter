@@ -26,6 +26,8 @@ https://github.com/pocketbase/pocketbase/releases/download/v<version>/pocketbase
 
 `--publicDir=..` makes PocketBase serve the app as well as the API: one origin, no CORS, and `--indexFallback` (on by default) sends unknown paths to `index.html`, which is the SPA fallback the router needs. So `services/pb.js` points at `/` and there is no host anywhere in the code.
 
+The trade is that `..` is the whole repository, `/server/pb_data/data.db` included. `pb_hooks/private.pb.js` refuses everything under `/server/` and every name that starts with a dot, `.git` among them, so the command above gives none of it away, even on a machine where somebody runs it facing the internet. The deploy does not lean on that: the Dockerfile copies only the frontend into `pb_public/` and leaves the server folder out.
+
 The dashboard is at `/_/`. Create your own account through the app's `/register` page — the `users` collection exists in a fresh install.
 
 ## What is in git and what is not
@@ -65,7 +67,7 @@ None of this matters on `127.0.0.1`, and all of it matters the day the URL is re
 - **Backups to S3-compatible storage** on a schedule. A single-node SQLite database is exactly as durable as the disk under it.
 - **`{APP_URL}` under Settings → Application.** A fresh install sets it to `http://localhost:8090`, and every mail template builds its link from it — so locally nothing ever complains, and in production every verification and reset link sends your users to their own machine. Nothing fails loudly; you find out from the first real account.
 - **SMTP on the real domain**, with SPF and DKIM, or verification and reset mail lands in spam.
-- **`--publicDir` must point at the frontend only.** Serving the repository root would publish `server/pb_data/data.db`.
+- **`--publicDir` must point at the frontend only.** `pb_hooks/private.pb.js` keeps the repository root from giving away `server/pb_data/data.db`, but that is a guard for the dev command, not a way to deploy.
 - **Pin the version** and read the changelog before upgrading. PocketBase is pre-1.0 and its own documentation says backward compatibility is not guaranteed until then.
 
 ## Deploying
@@ -89,7 +91,7 @@ Three gears, and you change up only when the one below runs out.
 
 **Hooks.** Anything the client must not decide goes in `pb_hooks/` as JavaScript — pricing an order, stamping a field, refusing a request. They run inside PocketBase; their shape and their limits are in [pb_hooks/README.md](pb_hooks/README.md).
 
-**Go.** When a hook wants a real library, a transaction across collections or a scheduled job, PocketBase is also a Go module: your own `main.go` imports it, registers routes and hooks, and compiles to one binary that is still PocketBase, with the same database and the same dashboard. What changes is this folder — from then on you build and ship your own binary, so `setup.sh` and `.pb-version`, which fetch an official release, no longer apply.
+**Go.** A transaction across collections and a scheduled job are both within a hook's reach, as `$app.runInTransaction` and `cronAdd`. When a hook wants a real library, or cryptography the engine does not have, PocketBase is also a Go module: your own `main.go` imports it, registers routes and hooks, and compiles to one binary that is still PocketBase, with the same database and the same dashboard. What changes is this folder — from then on you build and ship your own binary, so `setup.sh` and `.pb-version`, which fetch an official release, no longer apply.
 
 **The database is SQLite, and only SQLite.** That is a decision and not a gap: PostgreSQL and MySQL are not supported and are not planned. The connection can be pointed at something SQLite-compatible — a replicated build, for instance — but not at another engine. An app that genuinely needs Postgres has two honest options: keep PocketBase for auth and the dashboard while your own Go code owns the Postgres tables, which is two databases and all the bookkeeping that implies, or accept that it has outgrown this.
 
