@@ -3,16 +3,16 @@
 #
 #   fly apps create my-app
 #   fly volumes create pb_data --size 1 --region fra
-#   fly deploy --build-arg PB_VERSION=$(cat server/.pb-version)
+#   fly deploy --build-arg PB_VERSION=$(cat .pb-version)
 #
 # The build argument is passed on the command line rather than written in here, so the
-# PocketBase version still lives in server/.pb-version and nowhere else.
+# PocketBase version still lives in .pb-version and nowhere else.
 
 app = "my-app"
 primary_region = "fra"
 
 [build]
-  dockerfile = "server/Dockerfile"
+  dockerfile = "Dockerfile"
 
 [http_service]
   internal_port = 8090

@@ -3,33 +3,37 @@ import { createApp } from 'alpineshell';
 import { app } from './app.js';
 import { session } from './stores/session.js';
 import { homePage } from './pages/home.js';
-import { loginPage } from './pages/login.js';
-import { registerPage } from './pages/register.js';
-import { verifyPage } from './pages/verify.js';
-import { forgotPage } from './pages/forgot.js';
-import { resetPage } from './pages/reset.js';
-import { confirmEmailPage } from './pages/confirm-email.js';
-import { accountPage } from './pages/account.js';
+import { accountPage } from './pages/account/overview.js';
+import { loginPage } from './pages/account/login.js';
+import { registerPage } from './pages/account/register.js';
+import { verifyPage } from './pages/account/verify.js';
+import { forgotPage } from './pages/account/forgot.js';
+import { resetPage } from './pages/account/reset.js';
+import { confirmEmailPage } from './pages/account/confirm-email.js';
+
+// Signing in, and the pages a mail links to, stand alone: no header, no footer.
+const alone = (page) => ({ page, header: false, footer: false });
 
 createApp({
   app, // state and methods merged into the root component, reachable from every page
   theme: '/assets/theme.css',
   debug: true, // boot log, window.dbg, warnings, and a marker where a partial failed
 
-  // path -> page name. The name gives the template (/pages/<name>.html) and the title.
+  // path -> page name. The name is where the page lives, 'account/login' being
+  // /pages/account/login.html, and it is also the title unless `titles` gives one.
   // Use an object when a route needs different chrome than the rest:
   //   header/footer: omitted or true -> default partial, false -> none, 'name' -> that partial
   routes: {
     notfound: '404',
     '/': 'home',
-    '/login': { page: 'login', header: false, footer: false },
-    '/register': { page: 'register', header: false, footer: false },
+    '/account': 'account/overview',
+    '/login': alone('account/login'),
+    '/register': alone('account/register'),
     // The paths the mail templates link to; the token is the whole point of the route.
-    '/verify/:token': { page: 'verify', header: false, footer: false },
-    '/forgot-password': { page: 'forgot', header: false, footer: false },
-    '/reset-password/:token': { page: 'reset', header: false, footer: false },
-    '/confirm-email/:token': { page: 'confirm-email', header: false, footer: false },
-    '/account': 'account',
+    '/verify/:token': alone('account/verify'),
+    '/forgot-password': alone('account/forgot'),
+    '/reset-password/:token': alone('account/reset'),
+    '/confirm-email/:token': alone('account/confirm-email'),
   },
 
   protected: ['/account'], // prefix match: '/account' also covers '/account/orders'
@@ -38,15 +42,17 @@ createApp({
   // in and refused goes home, before anything under the prefix renders:
   // allow: { '/admin': (session) => session.user?.admin === true },
 
-  // Overrides only — a page with no entry gets its own name as the title.
+  // A page with no entry here is titled by its name, which suits 'home' and not
+  // 'account/login'.
   titles: {
     404: 'Page not found',
-    login: 'Sign in',
-    register: 'Create an account',
-    verify: 'Verify your email',
-    forgot: 'Reset your password',
-    reset: 'Set a new password',
-    'confirm-email': 'Confirm your new email',
+    'account/overview': 'Account',
+    'account/login': 'Sign in',
+    'account/register': 'Create an account',
+    'account/verify': 'Verify your email',
+    'account/forgot': 'Reset your password',
+    'account/reset': 'Set a new password',
+    'account/confirm-email': 'Confirm your new email',
   },
 
   stores: { session }, // register new store here
@@ -54,8 +60,8 @@ createApp({
   partials: ['toast', 'scrolltop'],
   // register new page component here
   pages: {
-    homePage, loginPage, registerPage, verifyPage,
-    forgotPage, resetPage, confirmEmailPage, accountPage,
+    homePage,
+    accountPage, loginPage, registerPage, verifyPage, forgotPage, resetPage, confirmEmailPage,
   },
 
   // Defaults in effect — uncomment to change:

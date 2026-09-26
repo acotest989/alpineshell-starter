@@ -1,4 +1,4 @@
-import { confirmVerification } from '../services/auth.js';
+import { confirmVerification } from '../../services/auth.js';
 import { errorMessage } from 'alpineshell';
 
 export const verifyPage = () => ({

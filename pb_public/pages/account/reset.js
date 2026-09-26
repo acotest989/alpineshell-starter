@@ -1,4 +1,4 @@
-import { confirmPasswordReset } from '../services/auth.js';
+import { confirmPasswordReset } from '../../services/auth.js';
 import { form } from 'alpineshell';
 
 const MIN_PASSWORD = 8;

@@ -1,4 +1,4 @@
-import { confirmEmailChange } from '../services/auth.js';
+import { confirmEmailChange } from '../../services/auth.js';
 import { form } from 'alpineshell';
 
 // The token alone is not enough: PocketBase asks for the password too, so a link

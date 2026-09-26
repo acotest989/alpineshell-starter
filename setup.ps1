@@ -17,5 +17,5 @@ Expand-Archive -Path $asset -DestinationPath . -Force
 Remove-Item $asset, CHANGELOG.md, LICENSE.md -ErrorAction SilentlyContinue
 
 Write-Output "PocketBase $version is ready. Next:"
-Write-Output "  .\pocketbase.exe serve --publicDir=.."
+Write-Output "  .\pocketbase.exe serve"
 Write-Output "  .\pocketbase.exe superuser create you@example.com yourpassword"

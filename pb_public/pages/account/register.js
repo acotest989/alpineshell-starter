@@ -1,4 +1,4 @@
-import { register } from '../services/auth.js';
+import { register } from '../../services/auth.js';
 import { form, consumeRedirect } from 'alpineshell';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

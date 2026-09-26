@@ -71,13 +71,13 @@
     </div>
 
     <pre class="terminal-body"><code><span class="terminal-prompt">$</span> npx degit acotest989/alpineshell-starter my-app             <span class="terminal-note"># or "Use this template" on GitHub</span>
-<span class="terminal-prompt">$</span> cd my-app/server
+<span class="terminal-prompt">$</span> cd my-app
 
 <span class="terminal-prompt">$</span> ./setup.sh                                                  <span class="terminal-note"># downloads PocketBase — .\setup.ps1 on Windows</span>
-<span class="terminal-prompt">$</span> ./pocketbase serve --publicDir=..                           <span class="terminal-note"># app and API on http://127.0.0.1:8090</span>
+<span class="terminal-prompt">$</span> ./pocketbase serve                                          <span class="terminal-note"># app and API on http://127.0.0.1:8090</span>
 <span class="terminal-prompt">$</span> ./pocketbase superuser create you@example.com yourpassword  <span class="terminal-note"># first run only, for the /_/ dashboard</span>
 
-<span class="terminal-prompt">$</span> docker build -f server/Dockerfile --build-arg PB_VERSION=$(cat server/.pb-version) -t my-app .
+<span class="terminal-prompt">$</span> docker build --build-arg PB_VERSION=$(cat .pb-version) -t my-app .
 <span class="terminal-prompt">$</span> docker run -p 8090:8090 -v pb_data:/pb/pb_data my-app       <span class="terminal-note"># the volume is the deployment</span></code></pre>
   </div>
 

@@ -1,6 +1,5 @@
 import { pb } from './pb.js';
 import { fieldError } from 'alpineshell';
-import { toUser } from '../models/user.js';
 
 // All contact with the SDK's auth lives here. The token is the SDK's business —
 // it stores it, refreshes it and sends it — so nothing above this file sees one.
@@ -185,4 +184,13 @@ export function currentUser() {
 
 export function onAuthChange(callback) {
   pb.authStore.onChange((token, record) => callback(record ? toUser(record) : null));
+}
+
+// The account as the app knows it: the record's fields stop here, so a page never learns them.
+function toUser(record) {
+  return {
+    id: record.id,
+    name: record.name || record.email.split('@')[0],
+    email: record.email,
+  };
 }

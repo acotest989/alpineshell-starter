@@ -31,5 +31,5 @@ rm -f "$ASSET" CHANGELOG.md LICENSE.md
 chmod +x pocketbase 2>/dev/null || true
 
 echo "PocketBase $VERSION is ready. Next:"
-echo "  ./pocketbase serve --publicDir=.."
+echo "  ./pocketbase serve"
 echo "  ./pocketbase superuser create you@example.com yourpassword"

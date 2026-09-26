@@ -5,7 +5,7 @@ import {
   requestVerification,
   deleteAccount,
   isVerified,
-} from '../services/auth.js';
+} from '../../services/auth.js';
 import { errorMessage } from 'alpineshell';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

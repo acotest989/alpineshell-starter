@@ -1,8 +1,8 @@
 {
-  "liveServer.settings.root": "/",
+  "liveServer.settings.root": "/pb_public",
   "liveServer.settings.file": "index.html",
 
-  // PocketBase writes to server/pb_data on every save, and Live Server would reload
+  // PocketBase writes to pb_data on every save, and Live Server would reload
   // the page mid-request. The first three are its own defaults, which this replaces.
   "liveServer.settings.ignoreFiles": [
     ".vscode/**",
