@@ -14,7 +14,7 @@ Press **Use this template** on GitHub, or copy it locally without any history:
 npx degit acotest989/alpineshell-starter my-app
 cd my-app
 
-./setup.sh                    # downloads PocketBase — .\setup.ps1 on Windows
+./setup.sh                    # downloads PocketBase — .\setup.ps1 in PowerShell
 ./pocketbase serve            # app and API on http://127.0.0.1:8090
 ./pocketbase superuser create you@example.com yourpassword   # first run only
 ```
@@ -196,10 +196,11 @@ The templates live under **Collections → users → Options**, and by default t
 
 The binary is not in git: ~33 MB, one build per platform, and the deploy uses the Linux one. It is fetched instead, from the version pinned in **`.pb-version`** — the only place that number appears, so an upgrade is one line and both the setup script and the Dockerfile follow it.
 
-Re-running the setup script is how you upgrade: bump `.pb-version`, run it again, read the changelog first. What the newest release is:
+Re-running the setup script is how you upgrade: bump `.pb-version`, stop the server (Windows will not overwrite a running binary), run it again, read the changelog first. To hear of a release as it comes out, watch the repository on GitHub (Watch → Custom → Releases). What the newest one is:
 
-```powershell
-(Invoke-RestMethod https://api.github.com/repos/pocketbase/pocketbase/releases/latest).tag_name
+```bash
+curl -s https://api.github.com/repos/pocketbase/pocketbase/releases/latest | grep tag_name
+# PowerShell: (Invoke-RestMethod https://api.github.com/repos/pocketbase/pocketbase/releases/latest).tag_name
 ```
 
 `uname` decides which build it fetches, so you get the one for the machine you are on. You rarely need another: the Dockerfile downloads the Linux build itself while the image is being built, from `TARGETARCH`, so deploying from Windows or a Mac takes nothing extra. When you do need one by hand, the asset name is the whole trick:
