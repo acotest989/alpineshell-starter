@@ -46,7 +46,7 @@ PocketBase serves the files as well as the API, so it is what you run. If you wa
 
 ## Make it yours
 
-Six things carry the template's name rather than your project's:
+Seven things carry the template's name rather than your project's:
 
 | | |
 |---|---|
@@ -56,6 +56,7 @@ Six things carry the template's name rather than your project's:
 | `pb_public/favicon.svg` | drawn for this template — replace it. |
 | `fly.toml` | the app name, and the region. Delete the file if you deploy elsewhere. |
 | `.pb-version` | leave it, but know it is where PocketBase's version lives. |
+| `renovate.json5` | the `timezone` its Monday runs by. Delete the file if you do not use [Renovate](#the-server). |
 
 ## Adding a page
 
@@ -163,6 +164,7 @@ pb_hooks/           server-side logic in JavaScript, once there is some; see the
 pb_migrations/      the schema as code, and the settings a fresh install needs
 Dockerfile          the same three folders, beside the Linux binary
 setup.ps1, setup.sh, .pb-version    the pinned PocketBase, fetched for this machine
+renovate.json5      where the versions are, for Renovate to watch
 fly.toml            one deployment spelled out; delete it if you host elsewhere
 ```
 
@@ -202,6 +204,8 @@ Re-running the setup script is how you upgrade: bump `.pb-version`, stop the ser
 curl -s https://api.github.com/repos/pocketbase/pocketbase/releases/latest | grep tag_name
 # PowerShell: (Invoke-RestMethod https://api.github.com/repos/pocketbase/pocketbase/releases/latest).tag_name
 ```
+
+`renovate.json5` does the watching for all three versions the app pins: PocketBase in `.pb-version`, the SDK and AlpineShell in the import map. With the [Renovate app](https://github.com/apps/renovate) installed on the repository, a newer release becomes a pull request on a Monday, changelog included, and nothing merges itself. PocketBase waits three days before it is offered, since a fix often follows a release within that time. Merging one moves the pin, not your binary: pull, then re-run the setup script. Not using Renovate? Delete the file; nothing else reads it.
 
 `uname` decides which build it fetches, so you get the one for the machine you are on. You rarely need another: the Dockerfile downloads the Linux build itself while the image is being built, from `TARGETARCH`, so deploying from Windows or a Mac takes nothing extra. When you do need one by hand, the asset name is the whole trick:
 
